@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import { Dimensions, StyleSheet, Text, View, Image } from 'react-native';
 import Header from '../components/Header';
+import Colors from '../constants/colors'
 import MapView from 'react-native-maps'
 import * as Permissions from 'expo-permissions'
 import Polyline from '@mapbox/polyline'
@@ -148,16 +149,7 @@ export default class MapsScreen extends Component {
           >
           </MapView.Polyline>
           <View
-            style={{
-              flex: 1,
-              backgroundColor: '#16a085',
-              color: '#303030',
-              width: width * 0.95,
-              alignSelf: 'center',
-              height: height * 0.15,
-              position: 'absolute',
-              bottom: height * 0.05
-            }}>
+            style={styles.mapsText}>
             <Text style={{ fontWeight: 'bold' }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</Text>
             <Text style={{ fontWeight: 'bold' }}>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</Text>
           </View>
@@ -181,4 +173,16 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
+  mapsText: {
+    flex: 1,
+    backgroundColor: Colors.accent,
+    borderRadius: 10,
+    padding: 10,
+    color: Colors.color1,
+    width: width * 0.95,
+    alignSelf: 'center',
+    height: height * 0.15,
+    position: 'absolute',
+    bottom: height * 0.05
+  }
 });
