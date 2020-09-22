@@ -5,7 +5,7 @@ export default function Profile({ navigation }) {
   return (
     <View>
       <Text>PROFILE HOME</Text>
-      <TouchableOpacity onPress={navigation.navigate("Login")}>
+      <TouchableOpacity onPress={() => navigation.navigate("Login")}>
         <Text>LOGIN</Text>
       </TouchableOpacity>
     </View>

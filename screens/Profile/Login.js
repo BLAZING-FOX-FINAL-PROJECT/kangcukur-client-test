@@ -55,6 +55,15 @@ export default function Login({ navigation }) {
     }
   }
 
+  const _clearStoredData = async(payload) => {
+    try {
+      await AsyncStorage.removeItem("access_token")
+      await AsyncStorage.removeItem("transaction_data")
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
   const loginHandler = () => {
     const payload = {
       telepon,
@@ -127,6 +136,9 @@ export default function Login({ navigation }) {
         </View>
         <TouchableOpacity style={styles.button} onPress={() => loginHandler()}>
           <Text style={styles.buttonText}>LOGIN</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={() => _clearStoredData()}>
+          <Text style={styles.buttonText}>purge</Text>
         </TouchableOpacity>
         <TouchableOpacity
           style={styles.buttonOutline}

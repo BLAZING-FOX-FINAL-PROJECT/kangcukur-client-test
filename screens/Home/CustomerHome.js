@@ -1,5 +1,12 @@
 import React from "react";
-import { Alert, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Alert,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  AsyncStorage,
+} from "react-native";
 import Colors from "../../constants/colors";
 import Carousel from "../../components/Carousel";
 import Card from "../../components/Card";
@@ -47,6 +54,25 @@ const dummyData = [
 ];
 
 export default function CustomerHome({ navigation }) {
+  
+  const checkAccess_token = async () => {
+    const access = await AsyncStorage.getItem("access_token");
+    const transactionData = await AsyncStorage.getItem("transaction_data");
+    if (!access) {
+      navigation.navigate("Profile", {
+        screen: "Login",
+      });
+    } else {
+      if (transactionData) {
+        navigation.navigate("Order");
+      } else {
+        navigation.navigate("VarianCukur", {
+          screen: "VarianCukur",
+        });
+      }
+    }
+  };
+
   return (
     <View style={StyleSheet.screen}>
       <View style={styles.carouselContainer}>
@@ -59,11 +85,7 @@ export default function CustomerHome({ navigation }) {
         <Card style={styles.card}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() =>
-              navigation.navigate("VarianCukur", {
-                screen: "VarianCukur",
-              })
-            }
+            onPress={() => checkAccess_token()}
           >
             <View style={styles.iconContainer}>
               <FontAwesome5 name="motorcycle" size={60} color="white" />

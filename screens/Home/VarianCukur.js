@@ -10,10 +10,10 @@ import {
   ToastAndroid,
 } from "react-native";
 import { useDispatch } from "react-redux";
-import Colors from "../../constants/colors";
-import VarianList from "../../components/VarianList";
 import { FontAwesome } from "react-native-vector-icons";
 import axios from "axios";
+import Colors from "../../constants/colors";
+import VarianList from "../../components/VarianList";
 // import { postTransactionCustom } from "../store/action/index";
 
 export default function VarianCukur({ navigation }) {
@@ -133,7 +133,6 @@ export default function VarianCukur({ navigation }) {
   };
 
   const postCukurNow = async () => {
-    // console.log(customerLatitude, customerLongitude, servis, "disini cuy");
     const access_token = await AsyncStorage.getItem("access_token");
     if (!customerLatitude || !customerLongitude || !servis.length) {
       ToastAndroid.show("Please pick a service.. ", 3000);
@@ -150,21 +149,27 @@ export default function VarianCukur({ navigation }) {
           servis,
         },
       })
-        .then(({ data }) => {
-          if (data.message === "Internal server error") {
-            ToastAndroid.show("We cant find kangcukur yet...", 3000);
-          } else {
-            navigation.navigate("Order");
+        .then(async ({ data }) => {
+          try {
+            if (data.message === "Internal server error") {
+              ToastAndroid.show("We cant find kangcukur yet...", 3000);
+            } else {
+              await AsyncStorage.setItem(
+                "transaction_data",
+                JSON.stringify(data)
+              );
+              navigation.navigate("Order");
+            }
+          } catch (err) {
+            console.log(err);
           }
         })
         .catch((err) => {
           console.log(err);
         });
     }
-
-      //   servis
-      // }))
   };
+
   return (
     <View style={styles.container}>
       <View style={styles.form}>
