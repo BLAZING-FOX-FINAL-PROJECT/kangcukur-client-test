@@ -17,16 +17,10 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": false,
-      "bundleIdentifier": "com.blazing.kangcukur",
-      "buildNumber": "1.0.0"
+      "supportsTablet": true
     },
     "web": {
       "favicon": "./assets/favicon.png"
-    },
-    "android": {
-      "package": "com.blazing.kangcukur",
-      "versionCode": 1
     }
   }
 }

@@ -1,24 +1,35 @@
-import React from "react";
-import { Text, View } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import React, { useEffect } from "react";
+import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "react-native-vector-icons";
+import * as Permissions from "expo-permissions";
 
-import HomeScreen from "./screens/HomeScreen2";
-import OrderScreen from "./screens/OrderScreen";
-import HistoryScreen from "./screens/HistoryScreen";
-import ProfileScreen from "./screens/ProfileScreen";
-
-import MapsScreen from "./screens/MapsScreen"
+import { HomeStackNavigator } from "./navigation/HomeStackNavigator";
+import { ProfileStackNavigator } from "./navigation/ProfileStackNavigator";
+import HistoryOrder from "./screens/History/HistoryOrder";
+import Profile from "./screens/Profile/Profile";
+import OngoingOrder from "./screens/Order/OngoingOrder";
 
 const Tab = createBottomTabNavigator();
 
-// import RootStackScreen from './screens/RootStackScreen'
-
 export default function App() {
+  useEffect(() => {
+    getLocationPermission();
+  }, []);
+
+  const getLocationPermission = async () => {
+    const { status } = await Permissions.getAsync(Permissions.LOCATION);
+    // console.log(status, "status");
+    if (status !== "granted") {
+      const response = await Permissions.askAsync(Permissions.LOCATION);
+      // console.log(response, "respone");
+    }
+  };
+
   return (
     <NavigationContainer>
-      {/* <RootStackScreen /> */}
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ focused, color, size }) => {
@@ -38,11 +49,20 @@ export default function App() {
           },
         })}
       >
-        <Tab.Screen name="Home" component={HomeScreen} />
-        <Tab.Screen name="Order" component={MapsScreen} />
-        <Tab.Screen name="History" component={HistoryScreen} />
-        <Tab.Screen name="Profile" component={ProfileScreen} />
+        <Tab.Screen name="Home" component={HomeStackNavigator} />
+        <Tab.Screen name="Order" component={OngoingOrder} />
+        <Tab.Screen name="History" component={HistoryOrder} />
+        <Tab.Screen name="Profile" component={ProfileStackNavigator} />
       </Tab.Navigator>
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
+});

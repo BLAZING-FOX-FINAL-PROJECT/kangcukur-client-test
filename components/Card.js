@@ -1,19 +1,19 @@
-import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import React from "react";
+import { StyleSheet, View } from "react-native";
 
-const Card = props => {
+const Card = (props) => {
   return (
     <View style={{ ...styles.card, ...props.style }}>{props.children}</View>
-  )
-}
+  );
+};
 
 const styles = StyleSheet.create({
   card: {
-    backgroundColor: 'white',
+    backgroundColor: "white",
     elevation: 8,
     padding: 20,
-    borderRadius: 10
-  }
-})
+    borderRadius: 10,
+  },
+});
 
-export default Card
+export default Card;
