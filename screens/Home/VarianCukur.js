@@ -6,6 +6,7 @@ import {
   Dimensions,
   TouchableOpacity,
   FlatList,
+  ActivityIndicator,
   AsyncStorage,
   ToastAndroid,
 } from "react-native";
@@ -23,6 +24,7 @@ export default function VarianCukur({ navigation }) {
   const [servis, setServis] = useState([]);
   const [customerLatitude, setCustomerLatitude] = useState(0);
   const [customerLongitude, setCustomerLongitude] = useState(0);
+  const [varian, setVarian] = useState([])
 
   useEffect(() => {
     const geoInterval = setInterval(() => {
@@ -66,32 +68,25 @@ export default function VarianCukur({ navigation }) {
     },
   });
 
-  const sampleVarian = [
-    {
-      jenisCukur: "Potong rambut pria",
-      hargaCukur: 60000,
-    },
-    {
-      jenisCukur: "Potong rambut anak",
-      hargaCukur: 30000,
-    },
-    {
-      jenisCukur: "Potong jenggot dan kumis",
-      hargaCukur: 25000,
-    },
-    {
-      jenisCukur: "Creambath pria",
-      hargaCukur: 50000,
-    },
-    {
-      jenisCukur: "Gentleman massage",
-      hargaCukur: 70000,
-    },
-    {
-      jenisCukur: "Gentleman full package",
-      hargaCukur: 200000,
-    },
-  ];
+  useEffect(() => {
+    getVarian()
+  },[])
+
+  const getVarian = useCallback(async () => {
+    const access_token = await AsyncStorage.getItem("access_token");
+
+    axios({
+      url:"https://tukangcukur.herokuapp.com/varian",
+      method: "GET",
+      headers:{
+        access_token
+      }
+    })
+    .then(({data}) => {
+      setVarian(data)
+    })
+    .catch(console.log)
+  })
 
   const addServis = (item) => {
     if (
@@ -105,7 +100,6 @@ export default function VarianCukur({ navigation }) {
         }
         return el;
       });
-      // console.log(addSameService);
       setServis(addSameService);
     } else {
       setServis([...servis].concat({ ...item, jumlah: 1 }));
@@ -168,7 +162,13 @@ export default function VarianCukur({ navigation }) {
         });
     }
   };
-
+  if(!varian.length){
+    return <ActivityIndicator
+      size="large"
+      color={Colors.accent}
+      style={{flex:1, alignItems:"center", alignSelf:"center",alignContent:"center"}}
+    />
+  }
   return (
     <View style={styles.container}>
       <View style={styles.form}>
@@ -188,7 +188,7 @@ export default function VarianCukur({ navigation }) {
             VARIAN CUKUR
           </Text>
           <FlatList
-            data={sampleVarian}
+            data={varian}
             renderItem={({ item, index }) => {
               return (
                 <VarianList

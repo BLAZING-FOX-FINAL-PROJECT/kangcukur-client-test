@@ -54,7 +54,7 @@ const dummyData = [
 ];
 
 export default function CustomerHome({ navigation }) {
-  
+
   const checkAccess_token = async () => {
     const access = await AsyncStorage.getItem("access_token");
     const transactionData = await AsyncStorage.getItem("transaction_data");
@@ -94,7 +94,10 @@ export default function CustomerHome({ navigation }) {
             <Text style={styles.buttonText}>CUKUR ON DELIVERY</Text>
             <MaterialIcons name="navigate-next" size={30} color="white" />
           </TouchableOpacity>
-
+        </Card>
+      </View>
+      <View style={styles.btnGroup}>
+        <Card style={styles.card}>
           <TouchableOpacity
             style={styles.button}
             onPress={() => Alert.alert("Simple Button pressed")}
@@ -110,6 +113,7 @@ export default function CustomerHome({ navigation }) {
           </TouchableOpacity>
         </Card>
       </View>
+
     </View>
   );
 }
@@ -147,6 +151,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderColor: Colors.accent,
     alignItems: "center",
+    // height: 100,
   },
   buttonText: {
     fontSize: 18,
@@ -160,7 +165,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   button: {
-    height: 100,
+    height: 60,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",

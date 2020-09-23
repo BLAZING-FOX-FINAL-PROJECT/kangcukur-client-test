@@ -7,6 +7,7 @@ import {
   Image,
   StyleSheet,
   Dimensions,
+  ToastAndroid,
 } from "react-native";
 import axios from "axios";
 import { Fontisto } from "@expo/vector-icons";
@@ -18,6 +19,31 @@ import { Marker } from "react-native-maps";
 const { width, height } = Dimensions.get("window");
 
 export default function OngoingOrder() {
+  const socket = useContext(SocketContext)
+  //PLEASE INSERT THIS FUNCTION ON A BUTTON
+  const endTransaction = async (id) => {
+    const access_token = await AsyncStorage.getItem("access_token");
+    const data = await AsyncStorage.getItem("transaction_data");
+    if (!data) ToastAndroid.show("Order not exist", 3000);
+    else {
+      axios({
+        url: `https://tukangcukur.herokuapp.com/transaksi/${id}`,
+        method: 'PATCH',
+        headers: {
+          access_token
+        },
+        data: {
+          status: 'completed'
+        }
+      })
+        .then(()=>{
+          socket.broadcast.emit()
+        })
+        .catch(console.log)
+    }
+  }
+  //PLEASE INSERT THIS FUNCTION ON A BUTTON
+
   const [transaction, setTransaction] = useState({
     CustomerId: 0,
     TukangCukurId: 0,
@@ -79,6 +105,7 @@ export default function OngoingOrder() {
   useEffect(() => {
     checkTransaction_data();
   }, []);
+
   if (!transaction) {
     return <ActivityIndicator />;
   } else {

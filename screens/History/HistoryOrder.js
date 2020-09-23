@@ -1,5 +1,5 @@
 import { StatusBar } from "expo-status-bar";
-import React, {useState} from "react";
+import React, {useState, useEffect, useCallback} from "react";
 import {
   StyleSheet,
   View,
@@ -7,33 +7,75 @@ import {
   ActivityIndicator,
   Dimensions,
   TouchableOpacity,
-  Text
+  Text,
+  AsyncStorage
 } from "react-native";
 import HistoryCard from "../../components/HistoryCard"
 // import DetailsCard from "../components/DetailsCard";
 import Header from "../../components/Header";
 import Colors from "../../constants/colors";
+import axios from "axios"
 
 export default function HistoryOrder({ navigation }) {
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
   const [completed, setCompleted] = useState(true)
+  const [historyList, setHistoryList] = useState([])
 
+  useEffect(()=>{
 
-  const sample = [
-    { nama: "kang cukur 1", status: "completed", tanggal: "202020", rating:"4.5", customer: "customer 1", info:"Service Rambut" },
-    { nama: "kang cukur 2", status: "canceled", tanggal: "212121", rating:"4.5", customer: "customer 2", info:"Service Rambut" },
-    { nama: "kang cukur 3", status: "canceled", tanggal: "212121", rating:"4.5", customer: "customer 3", info:"Service Rambut" },
-    { nama: "kang cukur 4", status: "completed", tanggal: "202020", rating:"4.5", customer: "customer 3", info:"Service Rambut" },
-    { nama: "kang cukur 5", status: "canceled", tanggal: "212121", rating:"4.5", customer: "customer 4", info:"Service Rambut" },
-    { nama: "kang cukur 6", status: "canceled", tanggal: "222222", rating:"4.5", customer: "customer 5", info:"Service Rambut" },
-    { nama: "kang cukur 7", status: "completed", tanggal: "202020", rating: "4.5", customer: "customer 6", info: "Service Rambut" }
-  ];
+    async function checkTokenAndTransactionData() {
+      try {
+        const access_token = await AsyncStorage.getItem("access_token");
+        console.log(access_token,'token');
+        return access_token
+      } catch (error) {
+        console.log(error)
+      }
+    }
 
-  let dataCompleted = sample.filter((e) => {
+    const access_token = checkTokenAndTransactionData()
+
+    console.log(access_token,'disini access_token')
+    if(access_token){
+      fetchHistory(access_token)
+    } else {
+      navigation.navigate("Profile", {
+        screen: "Login"
+      })
+    }
+  }, [])
+
+  // const checkTokenAndTransactionData = useCallback(async () => {
+  //   try {
+  //     const access_token = await AsyncStorage.getItem("access_token");
+  //     console.log(access_token,'token');
+  //     return access_token
+  //   } catch (error) {
+  //     console.log(error)
+  //   }
+  //   // const data = await AsyncStorage.getItem("transaction_data");
+  // });
+
+  const fetchHistory = (access_token) => {
+    axios({
+      url:"https://tukangcukur.herokuapp.com/transaksi",
+      method: "GET",
+      headers:{
+        access_token
+      }
+    })
+    .then(({data})=>{
+      console.log(data,'data cuy')
+      setHistoryList(data)
+    })
+    .catch(console.log)
+  }
+
+  let dataCompleted = historyList.filter((e) => {
     return e.status === 'completed'
   })
-  let dataCanceled = sample.filter((e) => {
+  let dataCanceled = historyList.filter((e) => {
     return e.status === 'canceled'
   })
 
@@ -45,9 +87,16 @@ export default function HistoryOrder({ navigation }) {
     setCompleted(true)
   }
 
+  if(!historyList.length){
+  //   return <ActivityIndicator
+  //   size="large"
+  //   color={Colors.accent}
+  //   style={{flex:1, alignItems:"center", alignSelf:"center",alignContent:"center"}}
+  // />
+  return <Text style={{flex:1, fontSize:150}}>login dulu</Text>
+  }
 
   return (
-
     <View style={styles.container}>
       <Header style={{flex:1}} title="Order History" />
       <View style={styles.btnHeaderContainer}>
@@ -65,7 +114,7 @@ export default function HistoryOrder({ navigation }) {
         </TouchableOpacity>
       </View>
       <View style={styles.listContainer}>
-        
+
         <FlatList
           data={completed? dataCompleted : dataCanceled}
           renderItem={({ item, index }) => {
@@ -82,7 +131,7 @@ const styles = StyleSheet.create({
   btnHeaderContainer: {
     flexDirection: 'row',
     width: '100%',
-    
+
   },
   container: {
     backgroundColor: Colors.base1,

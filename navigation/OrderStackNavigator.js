@@ -3,6 +3,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 const Stack = createStackNavigator();
 
 import OngoingOrder from "../screens/Order/OngoingOrder"
+import NoOrder from "../screens/Order/NoOrder"
 
 const OrderStackNavigator = () => {
   return (
@@ -14,20 +15,20 @@ const OrderStackNavigator = () => {
         headerShown: false,
       }}
     />
-    {/* <Stack.Screen
-      name="KangcukurHome"
-      component={KangcukurHome}
+    <Stack.Screen
+      name="NoOrder"
+      component={NoOrder}
       options={{
         headerShown: false,
       }}
     />
-    <Stack.Screen
+    {/* <Stack.Screen
       name="VarianCukur"
       component={VarianCukur}
       options={{
         headerShown: false,
       }}
-    /> */}
+    />  */}
   </Stack.Navigator>
   )
 }

@@ -25,8 +25,8 @@ import axios from "axios";
 
 export default function Login({ navigation }) {
   const radio_props = [
-    { label: "customer", value: "customer" },
-    { label: "kangcukur", value: "tukangcukur" },
+    { label: "Customer", value: "customer" },
+    { label: "Kang Cukur", value: "tukangcukur" },
   ];
   const [telepon, setTelepon] = useState("");
   const [password, setPassword] = useState("");
@@ -55,7 +55,7 @@ export default function Login({ navigation }) {
     }
   }
 
-  const _clearStoredData = async(payload) => {
+  const _clearStoredData = async() => {
     try {
       await AsyncStorage.removeItem("access_token")
       await AsyncStorage.removeItem("transaction_data")
@@ -140,15 +140,14 @@ export default function Login({ navigation }) {
         <TouchableOpacity style={styles.button} onPress={() => _clearStoredData()}>
           <Text style={styles.buttonText}>purge</Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        <View
           style={styles.buttonOutline}
-          onPress={() => loginHandler()}
         >
           <RadioForm
             radio_props={radio_props}
             initial={0}
             formHorizontal={true}
-            labelHorizontal={true}
+            labelHorizontal={false}
             buttonInnerColor={Colors.color1}
             buttonOuterColor={Colors.accent}
             buttonSize={15}
@@ -158,7 +157,7 @@ export default function Login({ navigation }) {
               setRole(value);
             }}
           />
-        </TouchableOpacity>
+        </View>
         {/* <Text style={styles.buttonTextOutline}>Register</Text> */}
       </View>
     </TouchableWithoutFeedback>
@@ -220,7 +219,7 @@ const styles = StyleSheet.create({
   },
   buttonOutline: {
     alignItems: "center",
-    borderColor: Colors.accent,
+    borderColor: Colors.base2,
     borderWidth: 1,
     padding: 10,
     width: "80%",

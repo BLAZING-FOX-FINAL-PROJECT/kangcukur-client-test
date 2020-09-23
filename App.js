@@ -1,10 +1,11 @@
 import { StatusBar } from "expo-status-bar";
-import React, { useEffect } from "react";
+import React, { useEffect, createContext } from "react";
 import { StyleSheet, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { Ionicons } from "react-native-vector-icons";
 import * as Permissions from "expo-permissions";
+import * as io from 'socket.io-client'
 
 import { HomeStackNavigator } from "./navigation/HomeStackNavigator";
 import { ProfileStackNavigator } from "./navigation/ProfileStackNavigator";
@@ -13,11 +14,17 @@ import HistoryOrder from "./screens/History/HistoryOrder";
 import OngoingOrder from "./screens/Order/OngoingOrder";
 
 const Tab = createBottomTabNavigator();
+const socket = io('https://tukangcukur.herokuapp.com')
+const socketContext = createContext()
 
 export default function App() {
   useEffect(() => {
     getLocationPermission();
   }, []);
+
+  socket.on('endTransaction', (payload)=>{
+    //popup modal here
+  })
 
   const getLocationPermission = async () => {
     const { status } = await Permissions.getAsync(Permissions.LOCATION);
@@ -29,6 +36,7 @@ export default function App() {
   };
 
   return (
+    <SocketContext.Provider value={socket}>
     <NavigationContainer>
       <Tab.Navigator
         screenOptions={({ route }) => ({
@@ -55,6 +63,7 @@ export default function App() {
         <Tab.Screen name="Profile" component={ProfileStackNavigator} />
       </Tab.Navigator>
     </NavigationContainer>
+  </SocketContext.Provider>
   );
 }
 
