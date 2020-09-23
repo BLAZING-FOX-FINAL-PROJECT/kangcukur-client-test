@@ -8,8 +8,8 @@ import * as Permissions from "expo-permissions";
 
 import { HomeStackNavigator } from "./navigation/HomeStackNavigator";
 import { ProfileStackNavigator } from "./navigation/ProfileStackNavigator";
+import { OrderStackNavigator } from "./navigation/OrderStackNavigator";
 import HistoryOrder from "./screens/History/HistoryOrder";
-import Profile from "./screens/Profile/Profile";
 import OngoingOrder from "./screens/Order/OngoingOrder";
 
 const Tab = createBottomTabNavigator();
@@ -50,7 +50,7 @@ export default function App() {
         })}
       >
         <Tab.Screen name="Home" component={HomeStackNavigator} />
-        <Tab.Screen name="Order" component={OngoingOrder} />
+        <Tab.Screen name="Order" component={OrderStackNavigator} />
         <Tab.Screen name="History" component={HistoryOrder} />
         <Tab.Screen name="Profile" component={ProfileStackNavigator} />
       </Tab.Navigator>

@@ -155,7 +155,10 @@ export default function VarianCukur({ navigation }) {
               "transaction_data",
               JSON.stringify(data)
             );
-            navigation.navigate("Order");
+            // navigation.navigate("Order");
+            navigation.navigate("Order", {
+              screen: "OngoingOrder",
+            });
           } catch (err) {
             return
           }
