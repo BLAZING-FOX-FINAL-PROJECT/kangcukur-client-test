@@ -151,21 +151,17 @@ export default function VarianCukur({ navigation }) {
       })
         .then(async ({ data }) => {
           try {
-            if (data.message === "Internal server error") {
-              ToastAndroid.show("We cant find kangcukur yet...", 3000);
-            } else {
-              await AsyncStorage.setItem(
-                "transaction_data",
-                JSON.stringify(data)
-              );
-              navigation.navigate("Order");
-            }
+            await AsyncStorage.setItem(
+              "transaction_data",
+              JSON.stringify(data)
+            );
+            navigation.navigate("Order");
           } catch (err) {
-            console.log(err);
+            return
           }
         })
         .catch((err) => {
-          console.log(err);
+          ToastAndroid.show("We cant find kangcukur yet...", 3000);
         });
     }
   };
