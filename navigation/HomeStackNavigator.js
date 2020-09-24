@@ -4,6 +4,7 @@ import { createStackNavigator } from "@react-navigation/stack";
 import KangcukurHome from "../screens/Home/KangcukurHome";
 import CustomerHome from "../screens/Home/CustomerHome";
 import VarianCukur from "../screens/Home/VarianCukur";
+import OrderNotification from "../screens/Home/OrderNotification"
 
 const Stack = createStackNavigator();
 
@@ -39,6 +40,13 @@ const HomeStackNavigator = () => {
           headerShown: false,
         }}
       />
+      {/* <Stack.Screen
+      name="OrderNotification"
+      component={OrderNotification}
+      options={{
+        headerShown: false,
+      }}
+    /> */}
     </Stack.Navigator>
   );
 };

@@ -1,13 +1,10 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text,Image, Input, Button, TouchableOpacity, Dimensions } from 'react-native'
+import { StyleSheet, View, Text,Image, Input, Button, TouchableOpacity } from 'react-native'
 import Colors from '../../constants/colors.js'
 import Header from '../../components/Header'
 import { FlatList, ScrollView, TextInput } from 'react-native-gesture-handler';
 
 import ChatCard from '../../components/ChatCard'
-
-const { width, height } = Dimensions.get("window");
-
 
 export default function ChatOrder({ navigation }) {
   const [text, setText] = useState('')
@@ -60,7 +57,9 @@ export default function ChatOrder({ navigation }) {
       </ScrollView>
       <View style={styles.buttomContainer}>
         <View styles={styles.inputContainer}>
+          <View style={styles.buttomIcon}>
 
+          </View>
           <View style={styles.buttonInput}>
             <TextInput
               style={styles.input}
@@ -93,20 +92,15 @@ const styles = StyleSheet.create({
     padding:10
   },
   input: {
-    width:280,
+    width:240,
   },
   inputContainer: {
     alignItems: 'center',
-    padding: 10,
-    width: width * 0.95,
-    alignSelf: "center",
-    width: width * 0.95,
-    alignSelf: "center",
   },
   buttonInput: {
     backgroundColor: 'white',
     borderRadius: 20,
-    paddingVertical: 15,
+    paddingVertical: 10,
     paddingHorizontal: 15,
     width:'100%'
   },
@@ -125,6 +119,7 @@ const styles = StyleSheet.create({
   buttomContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    width: '100%',
     paddingHorizontal: 10,
     paddingVertical: 10,
     position: 'absolute',

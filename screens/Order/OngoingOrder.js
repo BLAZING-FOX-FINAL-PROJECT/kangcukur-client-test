@@ -35,7 +35,7 @@ export default function OngoingOrder({ navigation }) {
     const access_token = await AsyncStorage.getItem("access_token");
     const stringedData = await AsyncStorage.getItem("transaction_data");
     const parsedData = JSON.parse(stringedData);
-    console.log(access_token)
+    // console.log(access_token)
     if (!parsedData) ToastAndroid.show("Order not exist", 3000);
     else {
       axios({
@@ -72,7 +72,9 @@ export default function OngoingOrder({ navigation }) {
           socket.emit('endTransactionServer', {CustomerId: data.CustomerId, TukangCukurId: data.TukangCukurId, status: data.status})
           return AsyncStorage.removeItem("transaction_data");
         })
-        .then(()=>{})
+        .then(()=>{
+          navigation.navigate("Home")
+        })
         .catch(console.log);
     }
   };
@@ -110,7 +112,7 @@ export default function OngoingOrder({ navigation }) {
     const access_token = await AsyncStorage.getItem("access_token");
     const data = await AsyncStorage.getItem("transaction_data");
 
-    if (!access_token) navigation.navigate("Profile", {
+    if (!access_token && !data) navigation.navigate("Profile", {
       screen: "Login"
     })
 
@@ -168,7 +170,9 @@ export default function OngoingOrder({ navigation }) {
               },
             ]);
           }
+          if (data) return AsyncStorage.setItem("transaction_data", JSON.stringify(data))
         })
+        .then(()=>{console.log()})
         .catch(console.log)
         .finally(() => {
           setLoading(false);

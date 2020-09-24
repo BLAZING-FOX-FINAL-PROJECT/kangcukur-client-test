@@ -4,7 +4,6 @@ import { useFocusEffect } from '@react-navigation/native';
 import Colors from '../../constants/colors'
 import Card from '../../components/Card';
 import Header from '../../components/Header';
-import EditProfile from "../../components/EditProfile"
 import axios from "axios"
 import { FontAwesome } from '@expo/vector-icons';
 

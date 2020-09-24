@@ -6,7 +6,6 @@ import OngoingOrder from "../screens/Order/OngoingOrder"
 import NoOrder from "../screens/Order/NoOrder"
 import Rating from "../screens/Order/Rating"
 import ChatOrder from "../screens/Order/ChatOrder"
-import OrderNofitication from "../screens/Order/OrderNotification"
 
 const OrderStackNavigator = () => {
   return (
@@ -32,20 +31,13 @@ const OrderStackNavigator = () => {
         headerShown: false,
       }}
     />
-    <Stack.Screen
-      name="OrderNofitication"
-      component={OrderNofitication}
-      options={{
-        headerShown: false,
-      }}
-    />
-    <Stack.Screen
+    {/* <Stack.Screen
       name="ChatOrder"
       component={ChatOrder}
       options={{
         headerShown: false,
       }}
-    />
+    /> */}
   </Stack.Navigator>
   )
 }

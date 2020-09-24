@@ -149,8 +149,8 @@ export default function VarianCukur({ navigation }) {
         },
       })
         .then(async ({ data }) => {
+          socket.emit('startTransactionServer', {CustomerId: data.CustomerId, TukangCukurId: data.TukangCukurId, status: data.status})
           try {
-            socket.emit('startTransactionServer', {CustomerId: data.CustomerId, TukangCukurId: data.TukangCukurId, status: data.status})
             await AsyncStorage.setItem(
               "transaction_data",
               JSON.stringify(data)

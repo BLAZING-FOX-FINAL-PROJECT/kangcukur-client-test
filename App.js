@@ -28,6 +28,60 @@ export default function App() {
   }, []);
 
 
+  socket.on('endTransaction', (payload) => {
+    let id
+    AsyncStorage.getItem('id')
+      .then((data) => {
+        id = +data
+        return AsyncStorage.getItem('role')
+      })
+      .then(role => {
+        if (role && id) {
+          if (role === 'customer') {
+            if (id === payload.CustomerId) {
+              Alert.alert(`transaction ${payload.status}`);
+            }
+          } if (role === 'tukangcukur') {
+            if (id === payload.TukangCukurId) {
+              Alert.alert(`transaction ${payload.status}`);
+            }
+          }
+        }
+      })
+        .catch(console.log)
+  }
+)
+
+// socket.emit('startTransactionServer', {CustomerId: data.CustomerId, TukangCukurId: data.TukangCukurId, status: data.status})
+
+socket.on('startTransaction', (payload)=> {
+  console.log('<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+  // let id
+  //   AsyncStorage.getItem('id')
+  //     .then((data) => {
+  //       id = +data
+  //       return AsyncStorage.getItem('role')
+  //     })
+  //     .then(role => {
+  //       if (role && id) {
+  //         if (role === 'customer') {
+  //           if (id === payload.CustomerId) {
+  //             console.log('customer emit <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+  //             Alert.alert(`transaction ${payload.status} created` );
+  //           }
+  //         } if (role === 'tukangcukur') {
+  //           if (id === payload.TukangCukurId) {
+  //             console.log('tukangcukur emit <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<')
+  //             Alert.alert(`transaction ${payload.status} created`);
+  //           }
+  //         }
+  //       }
+  //     })
+  //       .catch(console.log)
+})
+
+
+
 const getLocationPermission = async () => {
   const {
     status

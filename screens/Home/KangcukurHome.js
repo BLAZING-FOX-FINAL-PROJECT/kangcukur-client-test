@@ -19,63 +19,12 @@ const sample = [
 
 
 const KangcukurHome = ({ navigation }) => {
-  const socket = useContext(SocketContext)
   const [name, setName] = useState('')
   const [telepon, setTelepon] = useState('')
   const [status, setStatus] = useState(false)
   const [disabled, setDisabled] = useState(false);
   const [transaction, setTransaction] = useState([])
   const [id, setId] = useState('')
-
-
-  socket.on('endTransaction', (payload) => {
-    let id
-    AsyncStorage.getItem('id')
-      .then((data) => {
-        id = +data
-        return AsyncStorage.getItem('role')
-      })
-      .then(role => {
-        if (role && id) {
-          if (role === 'customer') {
-            if (id === payload.CustomerId) {
-              Alert.alert(`transaction ${payload.status}`);
-            }
-          } else if (role === 'tukangcukur') {
-            if (id === payload.TukangCukurId) {
-              Alert.alert(`transaction ${payload.status}`);
-            }
-          }
-        }
-      })
-        .catch(console.log)
-  }
-)
-
-// socket.emit('startTransactionServer', {CustomerId: data.CustomerId, TukangCukurId: data.TukangCukurId, status: data.status})
-
-socket.on('startTransaction', (payload)=> {
-  let id
-    AsyncStorage.getItem('id')
-      .then((data) => {
-        id = +data
-        return AsyncStorage.getItem('role')
-      })
-      .then(role => {
-        if (role && id) {
-          if (role === 'customer') {
-            if (id === payload.CustomerId) {
-              navigation.navigate("Order",{screen:"OrderNotification"})
-            }
-          } else if (role === 'tukangcukur') {
-            if (id === payload.TukangCukurId) {
-              navigation.navigate("Order",{screen:"OrderNotification"})
-            }
-          }
-        }
-      })
-        .catch(console.log)
-})
 
 
   useFocusEffect(() => {

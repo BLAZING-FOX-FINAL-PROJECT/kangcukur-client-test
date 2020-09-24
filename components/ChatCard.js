@@ -36,11 +36,13 @@ const ChatCard = ({ message, role }) => {
 
 const styles = StyleSheet.create({
   container: {
-    display: 'flex'
+    display: 'flex',
+    flexDirection: 'row'
   },
   chatKiri: {
     flexDirection: 'row',
-    justifyContent: 'flex-start',
+    // justifyContent: 'flex-start',
+    alignItems: 'center',
     padding: 10
   },
   chatKanan: {
@@ -65,7 +67,7 @@ const styles = StyleSheet.create({
   },
 
   imageContainer: {
-    borderWidth: 1,
+    borderWidth:1,
     width: 40,
     height: 40,
     borderRadius: 150,
