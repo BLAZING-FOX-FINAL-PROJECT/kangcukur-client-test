@@ -1,5 +1,6 @@
 import React from 'react'
 import { View, StyleSheet, Text, Image, Dimensions } from 'react-native'
+import colors from "../constants/colors"
 
 const { width, height } = Dimensions.get('window')
 
@@ -36,6 +37,10 @@ const styles = StyleSheet.create({
     bottom: 10,
     margin: 10,
     left: 5,
+    backgroundColor: "transparent",
+    backgroundColor: "rgba(241,242,246,0.51)",
+    padding:10,
+    borderRadius: 10
   },
   image: {
     width: width - 20,
@@ -43,7 +48,7 @@ const styles = StyleSheet.create({
     borderRadius: 10
   },
   itemTitle: {
-    color: 'white',
+    color: colors.color1,
     fontSize: 22,
     shadowColor: '#000',
     shadowOffset: { width: 0.8, height: 0.8 },
@@ -54,7 +59,7 @@ const styles = StyleSheet.create({
     elevation: 5
   },
   itemDescription: {
-    color: 'white',
+    color: colors.color1,
     fontSize: 12,
     shadowColor: '#000',
     shadowOffset: { width: 0.8, height: 0.8 },

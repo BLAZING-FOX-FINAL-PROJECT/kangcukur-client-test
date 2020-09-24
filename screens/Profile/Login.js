@@ -11,12 +11,14 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   AsyncStorage,
+  ToastAndroid
 } from "react-native";
 import RadioForm, {
   RadioButton,
   RadioButtonInput,
   RadioButtonLabel,
 } from "react-native-simple-radio-button";
+import Toast from 'react-native-root-toast';
 import { Entypo } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import Colors from "../../constants/colors";
@@ -33,6 +35,7 @@ export default function Login({ navigation }) {
   const [validNumber, setValidNumber] = useState(false);
   const [isSecureText, setIsSecureText] = useState(true);
   const [role, setRole] = useState("customer");
+  const [showToast, setShowToast] = useState(false)
 
   const numberInputHandler = (input) => {
     setTelepon(input.replace(/[^0-9]/g, ""));
@@ -55,14 +58,32 @@ export default function Login({ navigation }) {
     }
   }
 
-  const _clearStoredData = async() => {
+  const _storeId = async(payload) => {
     try {
-      await AsyncStorage.removeItem("access_token")
-      await AsyncStorage.removeItem("transaction_data")
+      await AsyncStorage.setItem("id", String(payload.id))
     } catch (err) {
       console.log(err);
     }
   }
+
+  const _storeRole = async(payload) => {
+    try {
+      await AsyncStorage.setItem("role", payload.role)
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  // const _clearStoredData = async() => {
+  //   try {
+  //     await AsyncStorage.removeItem("access_token")
+  //     await AsyncStorage.removeItem("id")
+  //     await AsyncStorage.removeItem("role")
+  //     await AsyncStorage.removeItem("transaction_data")
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }
 
   const loginHandler = () => {
     const payload = {
@@ -75,13 +96,33 @@ export default function Login({ navigation }) {
       data: payload,
     })
       .then(({ data }) => {
-        // setAccess_token(data);
         _storeData(data)
+        return axios({
+          url: `https://tukangcukur.herokuapp.com/verify`,
+          method: "GET",
+          headers: {
+            access_token: data.access_token
+          },
+        })
+      })
+      .then(({ data }) => {
+        _storeId(data)
+        _storeRole(data)
+        navigation.navigate("Profile", {
+          screen: "Profile"
+        }
+        );
         navigation.navigate(
           role === "customer" ? "CustomerHome" : "KangcukurHome"
         );
       })
-      .catch(console.log);
+      .catch(()=>{
+        ToastAndroid.showWithGravity(
+          "WRONG PASSWORD OR TELEPON...",
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
+      });
     setTelepon("");
     setPassword("");
   };
@@ -137,9 +178,6 @@ export default function Login({ navigation }) {
         <TouchableOpacity style={styles.button} onPress={() => loginHandler()}>
           <Text style={styles.buttonText}>LOGIN</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button} onPress={() => _clearStoredData()}>
-          <Text style={styles.buttonText}>purge</Text>
-        </TouchableOpacity>
         <View
           style={styles.buttonOutline}
         >
@@ -148,7 +186,7 @@ export default function Login({ navigation }) {
             initial={0}
             formHorizontal={true}
             labelHorizontal={false}
-            buttonInnerColor={Colors.color1}
+            buttonInnerColor={Colors.color3}
             buttonOuterColor={Colors.accent}
             buttonSize={15}
             buttonOuterSize={25}
@@ -158,7 +196,6 @@ export default function Login({ navigation }) {
             }}
           />
         </View>
-        {/* <Text style={styles.buttonTextOutline}>Register</Text> */}
       </View>
     </TouchableWithoutFeedback>
   );

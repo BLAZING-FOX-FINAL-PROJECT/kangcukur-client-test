@@ -1,22 +1,47 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { Alert, Button, StyleSheet, Text, View, Image, TouchableOpacity, AsyncStorage } from 'react-native';
+import { useFocusEffect } from '@react-navigation/native';
 import Colors from '../../constants/colors'
 import Card from '../../components/Card';
 import Header from '../../components/Header';
 import EditProfile from "../../components/EditProfile"
+import axios from "axios"
+import { FontAwesome } from '@expo/vector-icons';
 
 export default function Profile({ navigation }) {
   const [nama, setNama] = useState('Yang Cukur')
   const [telepon, setTelepon] = useState('')
-  const [alamat, setAlamat] = useState('Jl. Cinta Boulevard No.3 RT 07/02 Bintaro, Pasangrahan, Jepun, 12330')
+  const [alamat, setAlamat] = useState('Please login first')
+  const [rating, setRating] = useState(0)
   const [isLogged, setIsLogged] = useState(false)
+  const [token, setToken] = useState('')
+  const [urlPhoto, setUrlPhoto] = useState('https://images.unsplash.com/photo-1460748491143-2a97bbf7e4a8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60')
 
   const [showEdit, setShowEdit] = useState(false)
 
-  useEffect(() => {
+  useFocusEffect(()=>{
     checkAccess_token()
-  },[])
-
+    if (isLogged) {
+      AsyncStorage.getItem('role')
+      .then(role=>{
+        return axios({
+          method: "GET",
+          url: `https://tukangcukur.herokuapp.com/${role}`,
+          headers: {
+            access_token: token
+          }
+        })
+      })
+      .then(({data})=>{
+        setNama(data.nama)
+        setTelepon(data.telepon)
+        setAlamat(data.alamat || "")
+        setRating(data.rating || 0)
+        setUrlPhoto(data.urlPhoto || 'https://images.unsplash.com/photo-1460748491143-2a97bbf7e4a8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60')
+      })
+      .catch(err=>console.log(err))
+    }
+  }, [])
 
   const editProfile = (name, phoneNumber, address) => {
     setNama(name)
@@ -29,13 +54,28 @@ export default function Profile({ navigation }) {
     setShowEdit(false)
   }
 
-  const _clearStoredData = async() => {
-    try {
-      await AsyncStorage.removeItem("access_token")
-      await AsyncStorage.removeItem("transaction_data")
-    } catch (err) {
-      console.log(err);
-    }
+  const _clearStoredData = () => {
+      setIsLogged(false)
+      setNama("Yang Cukur")
+      setTelepon("")
+      setAlamat("Please login first..")
+      setRating(0)
+      setUrlPhoto('https://images.unsplash.com/photo-1460748491143-2a97bbf7e4a8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60')
+
+      AsyncStorage.removeItem("access_token")
+        .then(()=>{
+          return AsyncStorage.removeItem("transaction_data")
+        })
+        .then(()=>{
+          return AsyncStorage.removeItem("id")
+        })
+        .then(()=>{
+          return AsyncStorage.removeItem("role")
+        })
+        .then(()=>{
+          navigation.navigate('Home', {screen:"CustomerHome"})
+        })
+        .catch(console.log)
   }
 
   const checkAccess_token = async () => {
@@ -44,6 +84,7 @@ export default function Profile({ navigation }) {
       setIsLogged(false)
     } else {
       setIsLogged(true)
+      setToken(access)
     }
   };
 
@@ -64,23 +105,26 @@ export default function Profile({ navigation }) {
           onPress={() => setShowEdit(true)}
           style={styles.fotoProfile}
           source={{
-            uri:
-              'https://images.unsplash.com/photo-1558085324-2f298b28c714?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=1050&q=80',
+            uri: urlPhoto,
           }}
         />
         <Text style={styles.name}>{nama}</Text>
         <Text style={styles.phoneNumber}>{telepon}</Text>
-        <Text style={styles.address}>{alamat}</Text>
+        <Text style={styles.address}>{alamat || 'Rating:'}</Text>
+        {rating !== 0 && <View style={styles.ratingContainer}>
+          <FontAwesome name="star" size={24} color={Colors.accent} />
+          <Text style={styles.rating}>{String(rating).length === 1 ? String(rating)+'.0': String(rating)}</Text>
+        </View>}
 
       </Card>
       {isLogged &&
       <>
-        <TouchableOpacity
+        {/* <TouchableOpacity
           style={styles.button}
           onPress={() => setShowEdit(true)}
         >
           <Text style={styles.buttonText}>EDIT</Text>
-        </TouchableOpacity>
+        </TouchableOpacity> */}
         <TouchableOpacity
           style={styles.buttonOutline}
           onPress={() => _clearStoredData()}
@@ -167,7 +211,16 @@ const styles = StyleSheet.create({
   },
   buttonTextoutline: {
     color: Colors.accent
+  },
+  rating: {
+    fontSize: 18,
+    marginLeft: 10
+  },
+  ratingContainer: {
+    marginTop: 5,
+    flexDirection: 'row'
   }
+
 
 });
 

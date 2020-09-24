@@ -1,4 +1,5 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useCallback, useEffect, useContext } from "react";
+import { useFocusEffect } from '@react-navigation/native';
 import {
   StyleSheet,
   Text,
@@ -15,16 +16,18 @@ import { FontAwesome } from "react-native-vector-icons";
 import axios from "axios";
 import Colors from "../../constants/colors";
 import VarianList from "../../components/VarianList";
-// import { postTransactionCustom } from "../store/action/index";
+import SocketContext from "../../context/SocketContext";
+
 
 export default function VarianCukur({ navigation }) {
-  // const dispatch = useDispatch();
   const windowWidth = Dimensions.get("window").width;
   const windowHeight = Dimensions.get("window").height;
   const [servis, setServis] = useState([]);
   const [customerLatitude, setCustomerLatitude] = useState(0);
   const [customerLongitude, setCustomerLongitude] = useState(0);
   const [varian, setVarian] = useState([])
+
+  const socket = useContext(SocketContext)
 
   useEffect(() => {
     const geoInterval = setInterval(() => {
@@ -48,28 +51,27 @@ export default function VarianCukur({ navigation }) {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      backgroundColor: Colors.base2,
       alignItems: "center",
       justifyContent: "center",
       color: Colors.color1,
+      backgroundColor: Colors.base2
     },
     form: {
       flex: 4,
       flexDirection: "column",
-      marginTop: 30,
-      backgroundColor: Colors.base1,
-      width: (windowWidth * 95) / 100,
-      height: (windowHeight * 90) / 100,
+      marginTop: 20,
+      width: windowWidth,
+      height: windowHeight,
       alignItems: "center",
       justifyContent: "center",
-      borderRadius: 10,
-      padding: 15,
-      elevation: 8,
+      padding: 3,
     },
   });
 
-  useEffect(() => {
-    getVarian()
+  useFocusEffect(() => {
+    if(varian.length < 1 ){
+      getVarian()
+    }
   },[])
 
   const getVarian = useCallback(async () => {
@@ -130,6 +132,9 @@ export default function VarianCukur({ navigation }) {
     const access_token = await AsyncStorage.getItem("access_token");
     if (!customerLatitude || !customerLongitude || !servis.length) {
       ToastAndroid.show("Please pick a service.. ", 3000);
+    }
+    else if (!customerLatitude || !customerLongitude) {
+      ToastAndroid.show("Location not acquired.. ", 3000);
     } else {
       axios({
         url: "https://tukangcukur.herokuapp.com/transaksi",
@@ -145,11 +150,11 @@ export default function VarianCukur({ navigation }) {
       })
         .then(async ({ data }) => {
           try {
+            socket.emit('startTransactionServer', {CustomerId: data.CustomerId, TukangCukurId: data.TukangCukurId, status: data.status})
             await AsyncStorage.setItem(
               "transaction_data",
               JSON.stringify(data)
             );
-            // navigation.navigate("Order");
             navigation.navigate("Order", {
               screen: "OngoingOrder",
             });
@@ -162,7 +167,7 @@ export default function VarianCukur({ navigation }) {
         });
     }
   };
-  if(!varian.length){
+  if(!varian.length || !customerLatitude || !customerLongitude){
     return <ActivityIndicator
       size="large"
       color={Colors.accent}
@@ -172,21 +177,23 @@ export default function VarianCukur({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={styles.form}>
+        {/* <Text>{JSON.stringify(customerLatitude)} - {JSON.stringify(customerLongitude)}</Text> */}
         <View
           style={{
-            backgroundColor: Colors.accent,
+            // backgroundColor: Colors.accent,
             alignSelf: "flex-start",
-            paddingHorizontal: 10,
-            paddingVertical: 2,
+            paddingHorizontal: 15,
+            paddingVertical: 40,
             width: "100%",
-            borderRadius: 5,
-            elevation: 8,
+            marginTop:10,
             flex: 5,
           }}
         >
-          <Text style={{ fontSize: 26, color: Colors.base1 }}>
+          <View style={{justifyContent:"center", alignContent:"center", alignItems:"center", backgroundColor:Colors.accent, borderRadius:10, width:"100%", elevation:8}}>
+          <Text style={{ fontSize: 28, color: Colors.base1}}>
             VARIAN CUKUR
           </Text>
+          </View>
           <FlatList
             data={varian}
             renderItem={({ item, index }) => {
@@ -203,7 +210,7 @@ export default function VarianCukur({ navigation }) {
         </View>
         <TouchableOpacity
           style={{
-            marginTop: 15,
+            marginBottom:20,
             backgroundColor: Colors.color1,
             width: (windowWidth * 70) / 100,
             alignContent: "center",

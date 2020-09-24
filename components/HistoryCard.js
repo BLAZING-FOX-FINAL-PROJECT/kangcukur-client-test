@@ -1,12 +1,12 @@
 import { StatusBar } from "expo-status-bar"
 import React, { useState } from "react"
 import { TouchableOpacity, StyleSheet, Text, View, Image, FlatList } from "react-native"
+import { FontAwesome } from "react-native-vector-icons";
 import Colors from "../constants/colors"
 import HistoryDetailCard from "./HistoryDetailCard"
 
-export default function HistoryCard({ item }) {
+export default function HistoryCard({ item, role }) {
   const [showDetail, setShowDetail] = useState(false)
-  const { nama, customer, info, rating } = item
 
 
   const toggleDetail = () => {
@@ -21,20 +21,31 @@ export default function HistoryCard({ item }) {
               style={styles.fotoProfile}
               source={{
                 uri:
-                  "https://images.unsplash.com/photo-1520338661084-680395057c93?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
+                  item.TukangCukur.urlPhoto || "https://images.unsplash.com/photo-1460748491143-2a97bbf7e4a8?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
               }}
             />
             <View style={styles.text}>
-              <Text style={styles.title}>{nama}</Text>
-              <Text style={styles.info}>{info}</Text>
+              <Text style={styles.title}>{role === 'customer' ? item.Customer.nama : item.TukangCukur.nama}</Text>
+              <Text style={styles.info}>{role === 'customer' ? item.Customer.telepon : item.TukangCukur.telepon}</Text>
+
+              <Text style={styles.address}>{role === 'customer' ? item.Customer.alamat : 'Rating:'}</Text>
+              {item.TukangCukur.rating !== 0 && <View style={styles.ratingContainer}>
+                <FontAwesome name="star" size={24} color={Colors.accent} />
+                <Text style={styles.rating}>{String(item.TukangCukur.rating).length === 1 ? String(item.TukangCukur.rating)+'.0': String(item.TukangCukur.rating)}</Text>
+              </View>}
+
+
             </View>
           </View>
           <View style={styles.btnDetail}>
-            <Text style={styles.textLink}>Detail</Text>
+            <Text style={styles.textLink}></Text>
           </View>
       </View>
         {!showDetail &&
-          <View style={{flexDirection:"row"}}>
+          <View style={{flexDirection:"row",
+          alignItems: "center",
+          justifyContent: "center"
+          }}>
             <TouchableOpacity onPress={() => setShowDetail(false)}>
               <HistoryDetailCard item={item} />
             </TouchableOpacity>
@@ -60,7 +71,12 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: Colors.base1,
     paddingHorizontal: 20,
-    paddingVertical: 20
+    paddingVertical: 20,
+    marginTop: 10,
+    borderBottomWidth: 3,
+    borderBottomColor: Colors.accent,
+    borderTopStartRadius: 10,
+    borderTopEndRadius: 10
   },
   card: {
     flexDirection: 'row',
