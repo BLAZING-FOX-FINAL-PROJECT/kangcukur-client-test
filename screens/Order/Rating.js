@@ -6,6 +6,7 @@ import RadioForm, {
   RadioButtonLabel,
 } from "react-native-simple-radio-button";
 import Colors from "../../constants/colors"
+import axios from "axios"
 
 export default function Rating() {
   const [rating, setRating] = useState(1)
@@ -16,6 +17,8 @@ export default function Rating() {
     { label: "4", value: "4" },
     { label: "5", value: "5" },
   ];
+
+
 
   return (
     <View style={{flex:1, margin:"auto", alignItems:"center", alignContent:"center",alignSelf:"center", justifyContent: "center"}}>
