@@ -1,9 +1,8 @@
 import React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 
-import Profile from "../screens/Profile/Profile"
-import Login from "../screens/Profile/Login"
-// import VarianCukurScreen from "../screens/VarianCukurScreen";
+import Profile from "../screens/Profile/Profile";
+import Login from "../screens/Profile/Login";
 
 const Stack = createStackNavigator();
 

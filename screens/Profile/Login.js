@@ -11,12 +11,14 @@ import {
   TouchableWithoutFeedback,
   Keyboard,
   AsyncStorage,
+  ToastAndroid
 } from "react-native";
 import RadioForm, {
   RadioButton,
   RadioButtonInput,
   RadioButtonLabel,
 } from "react-native-simple-radio-button";
+import Toast from 'react-native-root-toast';
 import { Entypo } from "@expo/vector-icons";
 import { useSelector, useDispatch } from "react-redux";
 import Colors from "../../constants/colors";
@@ -25,14 +27,15 @@ import axios from "axios";
 
 export default function Login({ navigation }) {
   const radio_props = [
-    { label: "customer", value: "customer" },
-    { label: "kangcukur", value: "tukangcukur" },
+    { label: "Customer", value: "customer" },
+    { label: "Kang Cukur", value: "tukangcukur" },
   ];
   const [telepon, setTelepon] = useState("");
   const [password, setPassword] = useState("");
   const [validNumber, setValidNumber] = useState(false);
   const [isSecureText, setIsSecureText] = useState(true);
   const [role, setRole] = useState("customer");
+  const [showToast, setShowToast] = useState(false)
 
   const numberInputHandler = (input) => {
     setTelepon(input.replace(/[^0-9]/g, ""));
@@ -55,6 +58,33 @@ export default function Login({ navigation }) {
     }
   }
 
+  const _storeId = async(payload) => {
+    try {
+      await AsyncStorage.setItem("id", String(payload.id))
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  const _storeRole = async(payload) => {
+    try {
+      await AsyncStorage.setItem("role", payload.role)
+    } catch (err) {
+      console.log(err);
+    }
+  }
+
+  // const _clearStoredData = async() => {
+  //   try {
+  //     await AsyncStorage.removeItem("access_token")
+  //     await AsyncStorage.removeItem("id")
+  //     await AsyncStorage.removeItem("role")
+  //     await AsyncStorage.removeItem("transaction_data")
+  //   } catch (err) {
+  //     console.log(err);
+  //   }
+  // }
+
   const loginHandler = () => {
     const payload = {
       telepon,
@@ -66,13 +96,33 @@ export default function Login({ navigation }) {
       data: payload,
     })
       .then(({ data }) => {
-        // setAccess_token(data);
         _storeData(data)
+        return axios({
+          url: `https://tukangcukur.herokuapp.com/verify`,
+          method: "GET",
+          headers: {
+            access_token: data.access_token
+          },
+        })
+      })
+      .then(({ data }) => {
+        _storeId(data)
+        _storeRole(data)
+        navigation.navigate("Profile", {
+          screen: "Profile"
+        }
+        );
         navigation.navigate(
           role === "customer" ? "CustomerHome" : "KangcukurHome"
         );
       })
-      .catch(console.log);
+      .catch(()=>{
+        ToastAndroid.showWithGravity(
+          "WRONG PASSWORD OR TELEPON...",
+          ToastAndroid.SHORT,
+          ToastAndroid.CENTER
+        );
+      });
     setTelepon("");
     setPassword("");
   };
@@ -128,16 +178,15 @@ export default function Login({ navigation }) {
         <TouchableOpacity style={styles.button} onPress={() => loginHandler()}>
           <Text style={styles.buttonText}>LOGIN</Text>
         </TouchableOpacity>
-        <TouchableOpacity
+        <View
           style={styles.buttonOutline}
-          onPress={() => loginHandler()}
         >
           <RadioForm
             radio_props={radio_props}
             initial={0}
             formHorizontal={true}
-            labelHorizontal={true}
-            buttonInnerColor={Colors.color1}
+            labelHorizontal={false}
+            buttonInnerColor={Colors.color3}
             buttonOuterColor={Colors.accent}
             buttonSize={15}
             buttonOuterSize={25}
@@ -146,8 +195,7 @@ export default function Login({ navigation }) {
               setRole(value);
             }}
           />
-        </TouchableOpacity>
-        {/* <Text style={styles.buttonTextOutline}>Register</Text> */}
+        </View>
       </View>
     </TouchableWithoutFeedback>
   );
@@ -208,7 +256,7 @@ const styles = StyleSheet.create({
   },
   buttonOutline: {
     alignItems: "center",
-    borderColor: Colors.accent,
+    borderColor: Colors.base2,
     borderWidth: 1,
     padding: 10,
     width: "80%",

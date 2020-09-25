@@ -52,7 +52,7 @@ const Carousel = ({ data }) => {
           scrollEnabled
           snapToAlignment="center"
           scrollEventThrottle={16}
-          decelerationRate={"fast"}
+          decelerationRate={"normal"}
           showsHorizontalScrollIndicator={false}
           renderItem={({ item }) => {
             return <CarouselItem item={item} />;

@@ -1,5 +1,13 @@
 import React from "react";
-import { Alert, View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import {
+  Alert,
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  AsyncStorage,
+} from "react-native";
+import { useFocusEffect } from "@react-navigation/native";
 import Colors from "../../constants/colors";
 import Carousel from "../../components/Carousel";
 import Card from "../../components/Card";
@@ -10,6 +18,7 @@ import {
   Ionicons,
   MaterialIcons,
 } from "@expo/vector-icons";
+import axios from 'axios'
 
 const dummyData = [
   {
@@ -17,7 +26,7 @@ const dummyData = [
     url:
       "https://images.unsplash.com/photo-1585747860715-2ba37e788b70?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=753&q=80",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "Radiant cut for masculine gentleman.",
     id: 1,
   },
   {
@@ -25,7 +34,7 @@ const dummyData = [
     url:
       "https://images.unsplash.com/photo-1593702275687-f8b402bf1fb5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=500&q=60",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "Modern and chich style for every man.",
     id: 2,
   },
   {
@@ -33,7 +42,7 @@ const dummyData = [
     url:
       "https://images.unsplash.com/photo-1542940763-af472da7199a?ixlib=rb-1.2.1&auto=format&fit=crop&w=859&q=80",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "Simple, bold, and fixed hairstyle for every gentleman.",
     id: 3,
   },
   {
@@ -41,12 +50,43 @@ const dummyData = [
     url:
       "https://images.unsplash.com/photo-1512864084360-7c0c4d0a0845?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=750&q=80",
     description:
-      "Lorem Ipsum is simply dummy text of the printing and typesetting industry.",
+      "Barber cut for what you always need.",
     id: 4,
   },
 ];
 
 export default function CustomerHome({ navigation }) {
+
+  const checkAccess_token = async () => {
+    const access = await AsyncStorage.getItem("access_token");
+    const transactionData = await AsyncStorage.getItem("transaction_data");
+    if (!access) {
+      navigation.navigate("Profile", {
+        screen: "Login",
+      });
+    } else {
+      if (transactionData) {
+        navigation.navigate("Order");
+      } else {
+        navigation.navigate("VarianCukur", {
+          screen: "VarianCukur",
+        });
+      }
+    }
+  };
+
+  useFocusEffect(() => {
+    AsyncStorage.getItem('role')
+      .then(role => {
+        if (role === 'tukangcukur') {
+          navigation.navigate("Home", {
+            screen: "KangcukurHome",
+          });
+        }
+      })
+      .catch(console.log)
+  },[])
+
   return (
     <View style={StyleSheet.screen}>
       <View style={styles.carouselContainer}>
@@ -59,11 +99,7 @@ export default function CustomerHome({ navigation }) {
         <Card style={styles.card}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() =>
-              navigation.navigate("VarianCukur", {
-                screen: "VarianCukur",
-              })
-            }
+            onPress={() => checkAccess_token()}
           >
             <View style={styles.iconContainer}>
               <FontAwesome5 name="motorcycle" size={60} color="white" />
@@ -72,10 +108,13 @@ export default function CustomerHome({ navigation }) {
             <Text style={styles.buttonText}>CUKUR ON DELIVERY</Text>
             <MaterialIcons name="navigate-next" size={30} color="white" />
           </TouchableOpacity>
-
+        </Card>
+      </View>
+      <View style={styles.btnGroup}>
+        <Card style={styles.card}>
           <TouchableOpacity
             style={styles.button}
-            onPress={() => Alert.alert("Simple Button pressed")}
+            onPress={() => Alert.alert("Coming soon!!")}
           >
             <View style={styles.iconContainer}>
               {/* <Fontisto name="shopping-store" size={60} color="white" /> */}
@@ -88,6 +127,7 @@ export default function CustomerHome({ navigation }) {
           </TouchableOpacity>
         </Card>
       </View>
+
     </View>
   );
 }
@@ -125,6 +165,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     borderColor: Colors.accent,
     alignItems: "center",
+    // height: 100,
   },
   buttonText: {
     fontSize: 18,
@@ -138,7 +179,7 @@ const styles = StyleSheet.create({
     color: "white",
   },
   button: {
-    height: 100,
+    height: 60,
     flexDirection: "row",
     alignItems: "center",
     justifyContent: "flex-start",
